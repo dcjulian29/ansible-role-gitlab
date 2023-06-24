@@ -1,22 +1,16 @@
 {
   "name": "ansible-role-gitlab",
-  "image": "mcr.microsoft.com/devcontainers/base:bookworm",
+  "image": "mcr.microsoft.com/devcontainers/base:bullseye",
   "features": {
-    "ghcr.io/devcontainers-contrib/features/pipx-package:1": {
-      "package": "yamllint",
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers-contrib/features/pipx-package:1": {
-      "package": "ansible",
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers-contrib/features/pipx-package:1": {
-      "package": "ansible-lint",
-      "version": "latest"
-    },
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
       "version": "latest"
-    }
+    },
+    "ghcr.io/devcontainers-contrib/features/ansible:2": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-contrib/features/yamllint:2": {
+      "version": "latest"
+    },
   },
   "customizations": {
     "vscode": {
@@ -45,11 +39,12 @@
         "terminal.integrated.defaultProfile.linux": "bash"
       },
       "extensions": [
-    "redhat.ansible",
-    "streetsidesoftware.code-spell-checker",
-    "editorconfig.editorconfig",
-    "samuelcolvin.jinjahtml"
-  ]
+        "redhat.ansible",
+        "streetsidesoftware.code-spell-checker",
+        "editorconfig.editorconfig",
+        "samuelcolvin.jinjahtml"
+      ]
     }
-  }
-  
+  },
+  "postCreateCommand": "pip install ansible-lint docker molecule[lint,docker] toml"
+}
