@@ -1,0 +1,104 @@
+external_url "{{ gitlab_external_url }}"
+
+gitlab_rails['smtp_enable'] = {{ gitlab_smtp_enable | to_json }}
+{% if gitlab_smtp_enable %}
+gitlab_rails['smtp_address'] = "{{ gitlab_smtp_address }}"
+gitlab_rails['smtp_port'] = {{ gitlab_smtp_port }}
+{%   if gitlab_smtp_authentication %}
+gitlab_rails['smtp_authentication'] = "{{ gitlab_smtp_authentication }}"
+gitlab_rails['smtp_user_name'] = "{{ gitlab_smtp_user_name }}"
+gitlab_rails['smtp_password'] = "{{ gitlab_smtp_password }}"
+{%   endif %}
+gitlab_rails['smtp_domain'] = "{{ gitlab_smtp_domain }}"
+gitlab_rails['smtp_enable_starttls_auto'] = {{ gitlab_smtp_enable_starttls_auto | to_json }}
+gitlab_rails['smtp_tls'] = {{ gitlab_smtp_tls | to_json }}
+gitlab_rails['smtp_openssl_verify_mode'] = "{{ gitlab_smtp_verify_mode }}"
+{% endif %}
+
+gitlab_rails['gitlab_email_enabled'] = {{ gitlab_email_enabled | to_json }}
+{% if gitlab_email_enabled %}
+gitlab_rails['gitlab_email_from'] = "{{ gitlab_email_from }}"
+gitlab_rails['gitlab_email_display_name'] = "{{ gitlab_email_display_name }}"
+gitlab_rails['gitlab_email_reply_to'] = "{{ gitlab_email_reply_to }}"
+gitlab_rails['gitlab_email_subject_suffix'] = "{{ gitlab_email_subject_suffix }}"
+gitlab_rails['gitlab_email_smime_enabled'] = {{ gitlab_email_smime_enabled | to_json }}
+{%   if gitlab_email_smime_enabled %}
+gitlab_rails['gitlab_email_smime_key_file'] = "/etc/gitlab/ssl/{{ gitlab_email_smime_key_file }}"
+gitlab_rails['gitlab_email_smime_cert_file'] = "/etc/gitlab/ssl/{{ gitlab_email_smime_cert_file }}"
+gitlab_rails['gitlab_email_smime_ca_certs_file'] = "/etc/gitlab/ssl/{{ gitlab_email_smime_ca_certs_file }}"
+{%   endif %}
+{% endif %}
+
+{%- if gitlab_root_password | length > 0 %}
+gitlab_rails['initial_root_password'] = "{{ gitlab_root_password }}"
+{% endif %}
+
+gitlab_rails['gitlab_default_theme'] = {{ gitlab_default_theme }}
+gitlab_rails['gitlab_default_projects_features_issues'] = {{ gitlab_default_feature_issues | to_json }}
+gitlab_rails['gitlab_default_projects_features_merge_requests'] = {{ gitlab_default_feature_merge_requests | to_json }}
+gitlab_rails['gitlab_default_projects_features_wiki'] = {{ gitlab_default_feature_wiki | to_json }}
+gitlab_rails['gitlab_default_projects_features_snippets'] = {{ gitlab_default_feature_snippets | to_json }}
+gitlab_rails['gitlab_default_projects_features_builds'] = {{ gitlab_default_feature_builds | to_json }}
+gitlab_rails['gitlab_default_projects_features_container_registry'] = {{ gitlab_default_feature_registry | to_json }}
+
+gitlab_rails['trusted_proxies'] = {{ gitlab_trusted_proxies | to_json }}
+
+gitlab_rails['ldap_enabled'] = {{ gitlab_ldap_enabled | to_json }}
+{% if gitlab_ldap_enabled %}
+gitlab_rails['ldap_servers'] = {
+  'main' => {
+    'label' => '{{ gitlab_ldap_label }}',
+    'host' =>  '{{ gitlab_ldap_host }}',
+    'port' => {{ gitlab_ldap_port }},
+    'uid' => '{{ gitlab_ldap_uid }}',
+    'bind_dn' => '{{ gitlab_ldap_bind_dn }}',
+    'password' => '{{ gitlab_ldap_password }}'
+    'encryption' => '{{ gitlab_ldap_encryption }}',
+    'base' => '{{ gitlab_ldap_base }}',
+    'active_directory' => {{ gitlab_ldap_active_directory | to_json }},
+    'allow_username_or_email_login' => {{ gitlab_ldap_allow_username_or_email | to_json }}
+  }
+}
+{% endif %}
+
+gitlab_rails['backup_keep_time'] = {{ gitlab_backup_keep_time }}
+gitlab_rails['gitlab_shell_ssh_port'] = {{ gitlab_port_ssh }}
+
+registry['enable'] = {{ gitlab_registry_enable | to_json }}
+{% if gitlab_registry_enable %}
+registry_external_url "{{ gitlab_registry_url }}"
+registry_nginx['ssl_certificate'] = "/etc/gitlab/ssl/{{ gitlab_registry_tls_cert }}"
+registry_nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/{{ gitlab_registry_tls_key }}"
+{% endif %}
+
+nginx['redirect_http_to_https'] = {{ gitlab_https_redirect | to_json }}
+nginx['ssl_certificate'] = "/etc/gitlab/ssl/{{ gitlab_https_cert }}"
+nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/{{ gitlab_https_key }}"
+nginx['ssl_prefer_server_ciphers'] = "on"
+
+letsencrypt['enable'] = {{ gitlab_letsencrypt_enable | to_json }}
+{% if gitlab_letsencrypt_enable %}
+letsencrypt['contact_emails'] = {{ gitlab_letsencrypt_emails | to_json }}
+letsencrypt['key_size'] = {{ gitlab_letsencrypt_key_size }}
+letsencrypt['auto_renew'] = "{{ gitlab_letsencrypt_auto_renew | to_json }}"
+letsencrypt['auto_renew_hour'] = "{{ gitlab_letsencrypt_auto_renew_hour }}"
+letsencrypt['auto_renew_minute'] = "{{ gitlab_letsencrypt_auto_renew_minute }}"
+letsencrypt['auto_renew_day_of_month'] = "{{ gitlab_letsencrypt_auto_renew_day_of_month }}"
+letsencrypt['acme_staging_endpoint'] = "{{ gitlab_letsencrypt_acme_staging }}"
+letsencrypt['acme_production_endpoint'] = "{{ gitlab_letsencrypt_acme_production }}"
+{% endif %}
+
+{% if gitlab_extra_settings | length > 0 %}
+{%   for extra in gitlab_extra_settings %}
+{%     for setting in extra %}
+{%       for kv in extra[setting] %}
+{%         if (kv.type is defined and kv.type == 'plain') or (kv.value is not string) %}
+{{ setting }}['{{ kv.key }}'] = {{ kv.value }}
+{%         else %}
+{{ setting }}['{{ kv.key }}'] = "{{ kv.value }}"
+{%         endif %}
+{%       endfor %}
+{%     endfor %}
+
+{%   endfor %}
+{% endif %}

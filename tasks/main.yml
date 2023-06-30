@@ -1,0 +1,87 @@
+---
+- name: Ensure directories for Gitlab exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: 998
+    mode: "0755"
+  with_items:
+    - "{{ gitlab_data_dir }}"
+    - "{{ gitlab_data_dir }}/config"
+    - "{{ gitlab_data_dir }}/data"
+    - "{{ gitlab_data_dir }}/logs"
+
+- name: Create GitLab SSL configuration folder
+  ansible.builtin.file:
+    path: "{{ gitlab_data_dir }}/config/ssl"
+    state: directory
+    owner: root
+    group: 998
+    mode: "0700"
+
+- name: Pull Gitlab docker image
+  community.docker.docker_image:
+    name: "{{ gitlab_image }}"
+    source: pull
+    tag: "{{ gitlab_version }}"
+  notify: Remove Gitlab
+
+- name: Ensure all handlers run before continuing
+  ansible.builtin.meta: flush_handlers
+
+- name: Create self-signed certificate
+  ansible.builtin.command:
+    cmd: >
+      openssl req -new -nodes -x509 -subj "{{ gitlab_self_signed_cert_subj }}"
+        -days 3650 -keyout {{ gitlab_data_dir }}/config/ssl/{{ gitlab_https_key }}
+        -out {{ gitlab_data_dir }}/config/ssl/{{ gitlab_https_cert }} -extensions v3_ca
+    creates: "{{ gitlab_data_dir }}/config/ssl/{{ gitlab_https_cert }}"
+  when: gitlab_self_signed_cert
+
+- name: Copy GitLab configuration file
+  ansible.builtin.template:
+    src: gitlab.rb.j2
+    dest: "{{ gitlab_data_dir }}/config/gitlab.rb"
+    owner: root
+    group: 998
+    mode: "0640"
+  notify: Restart Gitlab
+
+- name: Add HTTP port to container
+  ansible.builtin.set_fact:
+    gitlab_ports: "{{ gitlab_ports + gitlab_ports_http }}"
+  when: gitlab_ports_expose
+
+- name: Add HTTPS port to container
+  ansible.builtin.set_fact:
+    gitlab_ports: "{{ gitlab_ports + gitlab_ports_https }}"
+  when:
+    - gitlab_ports_expose
+    - gitlab_https_expose
+
+- name: Add SSH port to container
+  ansible.builtin.set_fact:
+    gitlab_ports: "{{ gitlab_ports + gitlab_ports_ssh }}"
+  when:
+    - gitlab_ports_expose
+    - gitlab_ssh_expose
+
+- name: Ensure Gitlab container is created
+  community.docker.docker_container:
+    container_default_behavior: no_defaults
+    detach: true
+    image: "{{ gitlab_image }}:{{ gitlab_version }}"
+    interactive: false
+    name: "{{ gitlab_name }}"
+    ports: "{{ gitlab_ports }}"
+    pull: false
+    restart_policy: always
+    shm_size: 256m
+    state: present
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "{{ gitlab_data_dir }}/config:/etc/gitlab"
+      - "{{ gitlab_data_dir }}/logs:/var/log/gitlab"
+      - "{{ gitlab_data_dir }}/data:/var/opt/gitlab"
+  notify: Restart Gitlab

@@ -1,0 +1,82 @@
+---
+gitlab_backup_keep_time: 604800
+gitlab_data_dir: "/opt/{{ gitlab_name }}"
+gitlab_default_feature_builds: true
+gitlab_default_feature_issues: true
+gitlab_default_feature_merge_requests: true
+gitlab_default_feature_registry: true
+gitlab_default_feature_snippets: true
+gitlab_default_feature_wiki: true
+gitlab_default_theme: "{{ gitlab_theme_dark }}"
+gitlab_email_enabled: false
+gitlab_email_from: gitlab@example.com
+gitlab_email_display_name: Gitlab
+gitlab_email_reply_to: gitlab@example.com
+gitlab_email_subject_suffix: ""
+gitlab_email_smime_enabled: false
+gitlab_email_smime_key_file: gitlab_smime.key
+gitlab_email_smime_cert_file: gitlab_smime.crt
+gitlab_external_url: "http://{{ gitlab_fqdn }}"
+# https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/README.md#changing-gitlab-yml-settings
+gitlab_extra_settings: []
+gitlab_fqdn: "{{ ansible_fqdn }}"
+gitlab_https_cert: gitlab.crt
+gitlab_https_expose: true
+gitlab_https_key: gitlab.key
+gitlab_https_redirect: true
+gitlab_image: gitlab/gitlab-ce
+gitlab_ldap_active_directory: false
+gitlab_ldap_allow_username_or_email: true
+gitlab_ldap_base: DC=example,DC=com
+gitlab_ldap_bind_dn: CN=Username,CN=Users,DC=example,DC=com
+gitlab_ldap_enabled: false
+gitlab_ldap_encryption: plain    # 'start_tls', 'simple_tls', or 'plain'
+gitlab_ldap_host: ldap.example.com
+gitlab_ldap_password: password
+gitlab_ldap_port: 389
+gitlab_ldap_uid: sAMAccountName
+gitlab_letsencrypt_acme_staging: https://acme-staging-v02.api.letsencrypt.org/directory
+gitlab_letsencrypt_acme_production: https://acme-v02.api.letsencrypt.org/directory
+gitlab_letsencrypt_auto_renew: true
+gitlab_letsencrypt_auto_renew_hour: 0
+gitlab_letsencrypt_auto_renew_minute: 0
+gitlab_letsencrypt_auto_renew_day_of_month: "*/4"
+gitlab_letsencrypt_emails:
+  - gitlab@example.com
+gitlab_letsencrypt_enable: false
+gitlab_letsencrypt_key_size: 2048
+gitlab_name: "gitlab_{{ ansible_hostname }}"
+gitlab_port_http: 80
+gitlab_port_https: 443
+gitlab_port_ssh: 8022
+gitlab_ports_expose: true
+gitlab_registry_enable: false
+gitlab_registry_tls_cert: "{{ gitlab_https_cert }}"
+gitlab_registry_tls_key: "{{ gitlab_https_key }}"
+gitlab_registry_url: "https://{{ gitlab_fqdn }}"
+gitlab_root_password: Pa$$w0rd
+gitlab_self_signed_cert: true
+gitlab_self_signed_cert_subj: "/CN={{ gitlab_fqdn }}"
+gitlab_smtp_enable: false
+gitlab_smtp_address: smtp.example.com
+gitlab_smtp_port: 587
+gitlab_smtp_user_name: user
+gitlab_smtp_password: password
+gitlab_smtp_domain: example.com
+gitlab_smtp_authentication: login
+gitlab_smtp_enable_starttls_auto: true
+gitlab_smtp_tls: false
+gitlab_smtp_verify_mode: none    # 'none', 'peer', 'client_once', 'fail_if_no_peer_cert'
+gitlab_ssh_expose: true
+gitlab_theme_indigo: 1
+gitlab_theme_dark: 2
+gitlab_theme_light: 3
+gitlab_theme_blue: 4
+gitlab_theme_green: 5
+gitlab_theme_light_indigo: 6
+gitlab_theme_light_blue: 7
+gitlab_theme_light_green: 8
+gitlab_theme_red: 9
+gitlab_theme_light_red: 10
+gitlab_trusted_proxies: []
+gitlab_version: 16.1.1-ce.0

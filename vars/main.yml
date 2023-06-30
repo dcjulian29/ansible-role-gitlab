@@ -1,0 +1,8 @@
+---
+gitlab_ports: []
+gitlab_ports_http:
+  - "{{ gitlab_port_http }}:80/tcp"
+gitlab_ports_https:
+  - "{{ gitlab_port_https }}:443/tcp"
+gitlab_ports_ssh:
+  - "{{ gitlab_port_ssh }}:{{ gitlab_port_ssh }}/tcp"
