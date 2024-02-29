@@ -1,5 +1,5 @@
 ---
-gitlab_backup_keep_time: 604800
+gitlab_client_max_body_size: "250m"
 gitlab_data_dir: "/opt/{{ gitlab_name }}"
 gitlab_default_feature_builds: true
 gitlab_default_feature_issues: true
@@ -45,7 +45,12 @@ gitlab_letsencrypt_emails:
   - gitlab@example.com
 gitlab_letsencrypt_enable: false
 gitlab_letsencrypt_key_size: 2048
+gitlab_log_dir: "{{ gitlab_data_dir }}/logs"
 gitlab_name: "gitlab_{{ ansible_hostname }}"
+gitlab_pages_enable: false
+gitlab_pages_tls_cert: "{{ gitlab_https_cert }}"
+gitlab_pages_tls_key: "{{ gitlab_https_key }}"
+gitlab_pages_url: "https://{{ gitlab_fqdn }}"
 gitlab_port_http: 80
 gitlab_port_https: 443
 gitlab_port_ssh: 8022
@@ -54,7 +59,7 @@ gitlab_registry_enable: false
 gitlab_registry_tls_cert: "{{ gitlab_https_cert }}"
 gitlab_registry_tls_key: "{{ gitlab_https_key }}"
 gitlab_registry_url: "https://{{ gitlab_fqdn }}"
-gitlab_root_password: Pa$$w0rd
+gitlab_root_password: "{{ lookup('password', '/tmp/pw', length=15, chars=['ascii_letters', 'digits']) }}"
 gitlab_self_signed_cert: true
 gitlab_self_signed_cert_subj: "/CN={{ gitlab_fqdn }}"
 gitlab_smtp_enable: false
@@ -68,15 +73,5 @@ gitlab_smtp_enable_starttls_auto: true
 gitlab_smtp_tls: false
 gitlab_smtp_verify_mode: none    # 'none', 'peer', 'client_once', 'fail_if_no_peer_cert'
 gitlab_ssh_expose: true
-gitlab_theme_indigo: 1
-gitlab_theme_dark: 2
-gitlab_theme_light: 3
-gitlab_theme_blue: 4
-gitlab_theme_green: 5
-gitlab_theme_light_indigo: 6
-gitlab_theme_light_blue: 7
-gitlab_theme_light_green: 8
-gitlab_theme_red: 9
-gitlab_theme_light_red: 10
 gitlab_trusted_proxies: []
-gitlab_version: 16.6.1-ce.0
+gitlab_version: 16.8.1-ce.0

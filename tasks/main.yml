@@ -10,7 +10,7 @@
     - "{{ gitlab_data_dir }}"
     - "{{ gitlab_data_dir }}/config"
     - "{{ gitlab_data_dir }}/data"
-    - "{{ gitlab_data_dir }}/logs"
+    - "{{ gitlab_log_dir }}"
 
 - name: Create GitLab SSL configuration folder
   ansible.builtin.file:
@@ -82,6 +82,6 @@
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "{{ gitlab_data_dir }}/config:/etc/gitlab"
-      - "{{ gitlab_data_dir }}/logs:/var/log/gitlab"
+      - "{{ gitlab_log_dir }}:/var/log/gitlab"
       - "{{ gitlab_data_dir }}/data:/var/opt/gitlab"
   notify: Restart Gitlab
