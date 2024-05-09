@@ -74,4 +74,4 @@ gitlab_smtp_tls: false
 gitlab_smtp_verify_mode: none    # 'none', 'peer', 'client_once', 'fail_if_no_peer_cert'
 gitlab_ssh_expose: true
 gitlab_trusted_proxies: []
-gitlab_version: 16.11.1-ce.0
+gitlab_version: 16.11.2-ce.0
