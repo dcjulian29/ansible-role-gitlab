@@ -72,6 +72,7 @@
     container_default_behavior: no_defaults
     detach: true
     image: "{{ gitlab_image }}:{{ gitlab_version }}"
+    image_name_mismatch: recreate
     interactive: false
     name: "{{ gitlab_name }}"
     ports: "{{ gitlab_ports }}"
